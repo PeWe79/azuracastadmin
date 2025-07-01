@@ -649,60 +649,48 @@ Future<bool> _requestStoragePermission() async {
   if (!Platform.isAndroid) return true;
 
   try {
-    // Check Android version to determine which permissions to request
-    const int androidSdk = 33; // Default to newer Android for safety
+    // For Android 13+ (API 33+), use scoped storage with media permissions
+    // We'll assume modern Android and handle gracefully if permissions don't exist
 
-    // For Android 13+ (API 33+), we need different permissions
-    if (androidSdk >= 33) {
-      // For Android 13+, check media permissions
+    // Request permission to read audio files (Android 13+)
+    try {
       PermissionStatus audioStatus = await Permission.audio.status;
       if (audioStatus != PermissionStatus.granted) {
         audioStatus = await Permission.audio.request();
         if (audioStatus != PermissionStatus.granted) {
-          return false;
+          // Fall back to storage permission for older Android versions
+          PermissionStatus storageStatus = await Permission.storage.status;
+          if (storageStatus != PermissionStatus.granted) {
+            storageStatus = await Permission.storage.request();
+            return storageStatus == PermissionStatus.granted;
+          }
+          return true;
         }
       }
-
-      // Try to get manage external storage permission for broader access
-      PermissionStatus manageStorageStatus =
-          await Permission.manageExternalStorage.status;
-      if (manageStorageStatus != PermissionStatus.granted) {
-        manageStorageStatus = await Permission.manageExternalStorage.request();
-        // For Android 13+, this might not be granted for regular apps, that's okay
-      }
-
-      return true; // Audio permission is sufficient for downloads on Android 13+
-    } else {
-      // For Android 12 and below, use traditional storage permissions
-      PermissionStatus manageStorageStatus =
-          await Permission.manageExternalStorage.status;
-
-      if (manageStorageStatus == PermissionStatus.granted) {
-        return true;
-      }
-
-      // If manage external storage is not granted, check regular storage permission
+    } catch (e) {
+      // Audio permission might not exist on older Android versions
+      // Fall back to storage permission
       PermissionStatus storageStatus = await Permission.storage.status;
-
-      if (storageStatus == PermissionStatus.granted) {
-        return true;
+      if (storageStatus != PermissionStatus.granted) {
+        storageStatus = await Permission.storage.request();
+        return storageStatus == PermissionStatus.granted;
       }
-
-      // Request regular storage permission first
-      storageStatus = await Permission.storage.request();
-
-      if (storageStatus == PermissionStatus.granted) {
-        return true;
-      }
-
-      // If regular storage permission is denied, try requesting manage external storage
-      if (manageStorageStatus != PermissionStatus.permanentlyDenied) {
-        manageStorageStatus = await Permission.manageExternalStorage.request();
-        return manageStorageStatus == PermissionStatus.granted;
-      }
-
-      return false;
+      return true;
     }
+
+    // Request permission to read images (Android 13+)
+    try {
+      PermissionStatus photosStatus = await Permission.photos.status;
+      if (photosStatus != PermissionStatus.granted) {
+        photosStatus = await Permission.photos.request();
+        // Photos permission is not critical for core functionality
+      }
+    } catch (e) {
+      // Photos permission might not exist, continue without it
+      print('Photos permission not available: $e');
+    }
+
+    return true;
   } catch (e) {
     // If permission request fails, return false
     print('Permission request error: $e');

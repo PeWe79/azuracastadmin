@@ -2,10 +2,35 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Azuracastadmin</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mp3</string>
+				<string>wav</string>
+				<string>m4a</string>
+				<string>aac</string>
+				<string>flac</string>
+				<string>ogg</string>
+				<string>wma</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Audio Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -24,6 +49,22 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>This app needs access to your music library to upload audio files.</string>
+	<key>NSDocumentStorageUsageDescription</key>
+	<string>This app needs access to documents to upload audio files.</string>
+	<key>NSMediaLibraryUsageDescription</key>
+	<string>This app needs access to media library to upload audio files.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to microphone to upload audio files.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to photo library to upload audio files.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -41,48 +82,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
-	<key>UIFileSharingEnabled</key>
-	<true/>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app needs access to microphone to upload audio files.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to photo library to upload audio files.</string>
-	<key>NSDocumentStorageUsageDescription</key>
-	<string>This app needs access to documents to upload audio files.</string>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>This app needs access to your music library to upload audio files.</string>
-	<key>NSMediaLibraryUsageDescription</key>
-	<string>This app needs access to media library to upload audio files.</string>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<true/>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>mp3</string>
-				<string>wav</string>
-				<string>m4a</string>
-				<string>aac</string>
-				<string>flac</string>
-				<string>ogg</string>
-				<string>wma</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>Audio Files</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-	</array>
 </dict>
 </plist>

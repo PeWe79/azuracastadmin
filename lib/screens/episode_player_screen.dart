@@ -165,35 +165,46 @@ class _EpisodePlayerScreenState extends State<EpisodePlayerScreen> {
 
     // Request storage permission (only needed for Android)
     if (Platform.isAndroid) {
-      // For Android 13+ (API 33+), we need different permissions
-      Permission permission;
-      if (await Permission.manageExternalStorage.isGranted) {
-        // Already have manage external storage permission
-        permission = Permission.manageExternalStorage;
-      } else {
-        // Try to get manage external storage permission first
-        permission = Permission.manageExternalStorage;
-        var status = await permission.request();
+      // For Android 13+ (API 33+), use media permissions instead of MANAGE_EXTERNAL_STORAGE
+      bool hasPermission = false;
 
-        if (!status.isGranted) {
-          // Fallback to regular storage permission
-          permission = Permission.storage;
-          status = await permission.request();
-
-          if (!status.isGranted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Storage permission is required to download'),
-                backgroundColor: Colors.red,
-                action: SnackBarAction(
-                  label: 'Settings',
-                  onPressed: () => openAppSettings(),
-                ),
-              ),
-            );
-            return;
-          }
+      try {
+        // Try to get audio permission for Android 13+
+        PermissionStatus audioStatus = await Permission.audio.status;
+        if (audioStatus == PermissionStatus.granted) {
+          hasPermission = true;
+        } else {
+          audioStatus = await Permission.audio.request();
+          hasPermission = (audioStatus == PermissionStatus.granted);
         }
+      } catch (e) {
+        // Audio permission might not exist on older Android versions
+        hasPermission = false;
+      }
+
+      // If audio permission failed, try storage permission (for older Android)
+      if (!hasPermission) {
+        PermissionStatus storageStatus = await Permission.storage.status;
+        if (storageStatus == PermissionStatus.granted) {
+          hasPermission = true;
+        } else {
+          storageStatus = await Permission.storage.request();
+          hasPermission = (storageStatus == PermissionStatus.granted);
+        }
+      }
+
+      if (!hasPermission) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Storage permission is required to download'),
+            backgroundColor: Colors.red,
+            action: SnackBarAction(
+              label: 'Settings',
+              onPressed: () => openAppSettings(),
+            ),
+          ),
+        );
+        return;
       }
     }
 
